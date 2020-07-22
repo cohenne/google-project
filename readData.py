@@ -10,10 +10,23 @@ sentences = {}
 data_dict = defaultdict(list)
 
 
-def find_sequence(string):
-    indexes = data_dict[string][:5]
+def replace_char(word):
+    # word = word[::-1]
+    for char in word:
+        for i in string.ascii_lowercase:
+            if word.replace(char, i, 1) in data_dict.keys():
+                return word.replace(char, i, 1)
+    return None
 
-    return [AutoCompleteData(sentences[index.id].sentence, sentences[index.id].path, index.offset, get_score(sentences[index.id].sentence, string)) for index in indexes]
+
+def find_sequence(string):
+    senten = data_dict[string][:5]
+
+    if len(senten) < 5:
+        fix_word = replace_char(string)
+        senten += data_dict[fix_word][:(5 - len(senten))]
+
+    return [AutoCompleteData(sentences[index.id].sentence, sentences[index.id].path, index.offset, get_score(sentences[index.id].sentence, string)) for index in senten]
 
 
 def get_score(sentences, string, decrease=0):
@@ -36,15 +49,6 @@ def all_sub_words(line):
 #             if name == str(file_name) + ".txt":
 #                 return os.path.abspath(os.path.join(root, name))
 #     return False
-
-
-def replace_char(word):
-    word = word[::-1]
-    for index, char in enumerate(word):
-        for i in string.ascii_lowercase:
-            if word.replace(char, i) in sentences[index].sentence[::-1]:# ?
-                return index
-    return -1
 
 
 def delete_unnecessary_char(word):
@@ -83,12 +87,17 @@ def read_data(file_name):
         sub_words = all_sub_words(line)
 
         for word in sub_words:
-            # Prevent duplication of sentences
+            # if the sentences already exists
             if line not in (sentences[sentence_.id].sentence for sentence_ in data_dict[word]):
                 if len(data_dict[word]) < 5:
                     data_dict[word].append(subString(sentences_index, line.index(word)))
                 else:
-                    is_best_score(word, data_dict[word]) # alfa
+                    is_best_score(word, data_dict[word])
+
+        # for word in sub_words:
+        #     if len(data_dict[word]) < 5:
+        #         if line not in (sentences[sentence_.id].sentence for sentence_ in data_dict[replace_char(word)]):
+        #             data_dict[word].append(subString(sentences_index, line.index(word)))
 
         sentences_index += 1
 

@@ -32,7 +32,6 @@ def add_missed_char(word):
     word = word[::-1]
     for index, char in enumerate(word):
         for i in string.ascii_lowercase:
-            print(word.replace(char, char+i, 1)[::-1])
             if word.replace(char, char + i, 1) in sentences[0][::-1]:
                 return len(sentences[0]) - index + 1
     return -1
