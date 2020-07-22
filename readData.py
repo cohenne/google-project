@@ -3,16 +3,16 @@ from collections import defaultdict, namedtuple
 from AutoCompleteData import AutoCompleteData
 from pathlib import Path
 
-
-sentences = {}
-data_dict = defaultdict(list)
 subString = namedtuple('subString', ['id', 'offset'])
 sentence_path = namedtuple('sentence_url', ['sentence', 'path'])
 sentences_index = 0
+sentences = {}
+data_dict = defaultdict(list)
 
 
 def find_sequence(string):
     indexes = data_dict[string][:5]
+
     return [AutoCompleteData(sentences[index.id].sentence, sentences[index.id].path, index.offset, get_score(sentences[index.id].sentence, string)) for index in indexes]
 
 
@@ -38,6 +38,40 @@ def all_sub_words(line):
 #     return False
 
 
+def replace_char(word):
+    word = word[::-1]
+    for index, char in enumerate(word):
+        for i in string.ascii_lowercase:
+            if word.replace(char, i) in sentences[index].sentence[::-1]:# ?
+                return index
+    return -1
+
+
+def delete_unnecessary_char(word):
+    pass
+    #word = word[::-1]
+    #for index, char in enumerate(word):
+     #   if word.replace(char, "") in sentences[index].sentence[::-1]:
+      #      return word.index(char)
+    #return -1
+
+
+def add_missed_char(word):
+    pass
+#     word = word[::-1]
+#     for index, char in enumerate(word):
+#         for i in string.ascii_lowercase:
+#             if word.replace(char, char + i) in sentences[index].sentence[::-1]:
+#                 return index + 1
+#     return -1
+
+
+def is_best_score(new_sentence, sentences):
+    for sentence in sentences:
+        # choose the best score
+        pass
+
+
 def read_data(file_name):
     x_file = open(file_name, "r")
     x_line = x_file.read().splitlines()
@@ -48,8 +82,11 @@ def read_data(file_name):
         sub_words = all_sub_words(line_)
 
         for word in sub_words:
-            if sentences_index not in data_dict[word]:
+            # if sentences_index not in data_dict[sentences[sentences_index].sentence]:
+            if len(data_dict[word]) < 5:
                 data_dict[word].append(subString(sentences_index, line_.index(word)))
+            else:
+                is_best_score(word, data_dict[word]) # alfa
 
         sentences[sentences_index] = sentence_path(line, file_name)
         sentences_index += 1
@@ -72,21 +109,19 @@ if __name__ == '__main__':
 
     print("Loading the file and preparing the system....")
     init()
+    print(delete_unnecessary_char("Itt is not possible to use these functions on objects that are not"))
     x = input("The system is ready. Enter your text:")
-
     while x:
+
         if x[-1] != '#':
             x = format_line(x)
             suggestions = find_sequence(x)
-
             if suggestions:
                 print(f"There are {len(suggestions)} suggestions")
                 for i in range(len(suggestions)):
-                    print(f'{i+1}. {suggestions[i].get_complete_sentence()} , path = {suggestions[i].get_source_text()}')
-
+                    print(f'{i + 1}. {suggestions[i].get_complete_sentence()} , path = {suggestions[i].get_source_text()}')
             else:
                 print("There are'nt suggestions")
-
             print(x, end='')
             x += input()
 
