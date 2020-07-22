@@ -78,17 +78,18 @@ def read_data(file_name):
     global sentences_index
 
     for line in x_line:
+        sentences[sentences_index] = sentence_path(line, file_name)
         line_ = format_line(line)
-        sub_words = all_sub_words(line_)
+        sub_words = all_sub_words(line)
 
         for word in sub_words:
-            # if sentences_index not in data_dict[sentences[sentences_index].sentence]:
-            if len(data_dict[word]) < 5:
-                data_dict[word].append(subString(sentences_index, line_.index(word)))
-            else:
-                is_best_score(word, data_dict[word]) # alfa
+            # Prevent duplication of sentences
+            if line not in (sentences[sentence_.id].sentence for sentence_ in data_dict[word]):
+                if len(data_dict[word]) < 5:
+                    data_dict[word].append(subString(sentences_index, line.index(word)))
+                else:
+                    is_best_score(word, data_dict[word]) # alfa
 
-        sentences[sentences_index] = sentence_path(line, file_name)
         sentences_index += 1
 
 
@@ -96,10 +97,12 @@ def init():
 
     directory_list = ["c-api"]
     while len(directory_list) != 0:
-        basepath = Path(directory_list.pop(-1))
-        for entry in basepath.iterdir():
+        base_path = Path(directory_list.pop(-1))
+
+        for entry in base_path.iterdir():
             if entry.is_dir():
                 directory_list.append(entry)
+
             else:
                 print(entry)
                 read_data(entry)
@@ -109,19 +112,22 @@ if __name__ == '__main__':
 
     print("Loading the file and preparing the system....")
     init()
-    print(delete_unnecessary_char("Itt is not possible to use these functions on objects that are not"))
+    #print(delete_unnecessary_char("Itt is not possible to use these functions on objects that are not"))
     x = input("The system is ready. Enter your text:")
-    while x:
 
+    while x:
         if x[-1] != '#':
             x = format_line(x)
             suggestions = find_sequence(x)
+
             if suggestions:
                 print(f"There are {len(suggestions)} suggestions")
                 for i in range(len(suggestions)):
                     print(f'{i + 1}. {suggestions[i].get_complete_sentence()} , path = {suggestions[i].get_source_text()}')
+
             else:
                 print("There are'nt suggestions")
+
             print(x, end='')
             x += input()
 
