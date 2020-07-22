@@ -1,0 +1,26 @@
+we have 2 files of type .json
+
+1. auto_complete_data.json
+    this file hold all substring of the sentence in system
+    for every key, we hold 5 result
+
+    what is result?
+    result is sentence that the key is substring of it.
+
+    result describe by sentence_id, score, offset
+
+2. sentence.json
+    this file hold all sentence and their file path
+    the key is id_sentence
+    for every key, we hold sentence and path
+
+
+
+how it work?
+
+when the user type substring, the system search it in keys from auto_complete_data.json
+and return 3 lists: sentence_id, score, offset
+
+now we extract the sentences:
+for every sentence_id the system search it in keys from sentence.json
+and return the sentence and path
