@@ -1,4 +1,4 @@
-import re
+import re, string
 from collections import defaultdict, namedtuple
 from AutoCompleteData import AutoCompleteData
 from pathlib import Path
@@ -21,6 +21,7 @@ def get_score(sentences, string, decrease=0):
 
 
 def format_line(line):
+    line = line.translate(line.maketrans("", "", string.punctuation))
     return re.sub(' +', ' ', line).lower()
 
 
@@ -43,12 +44,12 @@ def read_data(file_name):
     global sentences_index
 
     for line in x_line:
-        line = format_line(line)
-        sub_words = all_sub_words(line)
+        line_ = format_line(line)
+        sub_words = all_sub_words(line_)
 
         for word in sub_words:
             if sentences_index not in data_dict[word]:
-                data_dict[word].append(subString(sentences_index, line.index(word)))
+                data_dict[word].append(subString(sentences_index, line_.index(word)))
 
         sentences[sentences_index] = sentence_path(line, file_name)
         sentences_index += 1
@@ -75,6 +76,7 @@ if __name__ == '__main__':
 
     while x:
         if x[-1] != '#':
+            x = format_line(x)
             suggestions = find_sequence(x)
 
             if suggestions:
