@@ -12,5 +12,6 @@ class AutoCompleteData:
     def get_source_text(self):
         return self.source_text
 
-
+    def get_score(self):
+        return self.score
 
