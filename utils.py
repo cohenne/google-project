@@ -1,4 +1,5 @@
-import re, string
+import re
+import string
 
 
 def format_line(line):

@@ -1,8 +1,9 @@
 from collections import defaultdict, namedtuple
 from pathlib import Path
+import json
 
 from utils import format_line, all_sub_words
-
+RESULT_LEN = 5
 
 subString = namedtuple('subString', ['id', 'score', 'offset'])
 sentence_path = namedtuple('sentence_url', ['sentence', 'path'])
@@ -26,7 +27,7 @@ def read_data(file_name):
             # prevent duplication of sentences
             if line not in [sentences[sentence_.id].sentence for sentence_ in data_dict[word]]:
 
-                if len(data_dict[word]) < 5:
+                if len(data_dict[word]) < RESULT_LEN:
                     data_dict[word].append(subString(sentences_id, 0, line_number))
 
         sentences_id += 1

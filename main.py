@@ -6,19 +6,19 @@ The next feature will save the data in an file(Probably of the json type)
 
 from offline import init
 from utils import format_line
-from online import find_sequence
+from online import get_best_k_completions
 
 
 if __name__ == '__main__':
-
+    STOP_INPUT = '#'
     print("Loading the file and preparing the system....")
     init()
-    x = input("The system is ready. Enter your text:")
+    string_to_complete = input("The system is ready. Enter your text:")
 
-    while x:
-        if x[-1] != '#':
-            x = format_line(x)
-            suggestions = find_sequence(x)
+    while string_to_complete:
+        if string_to_complete[-1] != STOP_INPUT:
+            string_to_complete = format_line(string_to_complete)
+            suggestions = get_best_k_completions(string_to_complete)
 
             if suggestions:
                 print(f"There are {len(suggestions)} suggestions")
@@ -29,9 +29,9 @@ if __name__ == '__main__':
             else:
                 print("There are'nt suggestions")
 
-            print(x, end='')
-            x += input()
+            print(string_to_complete, end='')
+            string_to_complete += input()
 
         else:
-            x = input("Enter your text:")
+            string_to_complete = input("Enter your text:")
 
